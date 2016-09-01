@@ -1,22 +1,24 @@
 # Create dataframe for sticking goals into
-start_date <- as.Date('2016-08-08')
+start_date <- as.Date('2016-09-05')
 df <- data.frame(date = seq(start_date,
                             start_date + 100,
                             by = 1))
 df$day <- weekdays(df$date)
 
 # Starting values (ie, baseline fitness)
-baseline <- data.frame(cardio = 10,
-                       pushups = 100,
-                       pullups = 20,
-                       dips = 20,
-                       leg_lifts = 100,
-                       crunches = 100,
-                       ab_squeezes = 10,
-                       lunges = 20,
-                       squats = 10,
-                       jumps = 10,
-                       vertical_lifts = 10)
+baseline <- data.frame(cardio_minutes = 20,
+                       pushups = 200,
+                       pullups_joe = 40,
+                       pullups_ben = 20,
+                       dips = 40,
+                       leg_lifts = 200,
+                       crunches = 200,
+                       ab_squeezes = 20,
+                       stair_minutes_ben = 20,
+                       lunges_joe = 40,
+                       squats_joe = 40,
+                       jumps_joe = 40,
+                       calf_raises = 40)
 
 # Populate df with empty columns
 for (j in names(baseline)){
@@ -33,8 +35,8 @@ for (i in 1:nrow(df)){
   }
 }
 
-# Define which days are cardio, workout and rest days
-df$cardio_day <- df$day %in% c('Monday',
+# Define which days are cardio_minutes, workout and rest days
+df$cardio_minutes_day <- df$day %in% c('Monday',
                                 'Tuesday',
                                 'Wednesday',
                                 'Thursday',
@@ -43,9 +45,9 @@ df$workout_day <- df$day %in% c('Monday',
                                 'Wednesday',
                                 'Friday')
 
-df$cardio[!df$cardio_day] <- 0
+df$cardio_minutes[!df$cardio_minutes_day] <- 0
 not_workout <- which(!df$workout_day)
-for (j in names(baseline)[names(baseline) != 'cardio']){
+for (j in names(baseline)[names(baseline) != 'cardio_minutes']){
   for (i in 1:nrow(df)){
     if(i %in% not_workout){
       df[i,j] <- 0
