@@ -5,6 +5,7 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
+library(DT)
 
 # Read in data
 df <- gsheet2tbl(url = 'https://docs.google.com/spreadsheets/d/1zuCFYKM3LUlGKQ5rVBAE7upzqlvoxv0YN4ziHT2Y9y8/edit#gid=885247896')
