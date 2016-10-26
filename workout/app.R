@@ -16,20 +16,41 @@ df$date <- as.Date(df$date)
 # Make numeric
 df$done <- as.numeric(df$done)
 
+# Function for getting days done and days to go
+days <- function(){
+  start_date <- min(df$date)
+  end_date <- max(df$date)
+  today <- Sys.Date()
+  return(c(
+    as.numeric(today - start_date),
+    as.numeric(end_date - today)
+  ))
+}
+
 # Define function for plotting
 plot_activity <- function(exercise = 'pullups'){
  
    # Subset the data
   sub_data <- df %>%
-    filter(activity == exercise)
+    filter(type == exercise)
+  
+  # Helper to get cumsum with na
+  cum_summer <- function(x){
+    x[is.na(x)] <- 0
+    cumsum(x)
+  }
   
   # Make cumulative if applicable
   sub_title <- ''
   if(exercise != 'weight'){
     sub_data <- sub_data %>%
+      arrange(date) %>%
+      group_by(person, date) %>%
+      summarise(done = sum(done, na.rm = TRUE),
+             scheduled = sum(scheduled, na.rm = TRUE)) %>%
       group_by(person) %>%
-      mutate(done = cumsum(done),
-             scheduled = cumsum(scheduled)) %>%
+      mutate(done = cum_summer(done),
+             scheduled = cum_summer(scheduled)) %>%
         ungroup
     sub_title <- 'Cumulative'
   }
@@ -40,11 +61,12 @@ plot_activity <- function(exercise = 'pullups'){
            value = done,
            scheduled:done)
   
-  # # Define ylim
-  # sub_data <- sub_data %>%
-  #   filter(date >= min(sub_data$date),
-  #          date <= max(sub_data$date[!is.na(sub_data$done) & sub_data$done != 0]))
-  # 
+  # Group
+  sub_data <-
+    sub_data %>%
+    group_by(date, person, scheduled) %>%
+    summarise(done = sum(done, na.rm = TRUE))
+
   # Make colors
   cols <- colorRampPalette(brewer.pal(9, 'Spectral'))(length(unique(sub_data$person)))
   # Plot
@@ -61,7 +83,8 @@ plot_activity <- function(exercise = 'pullups'){
     xlab('Date') +
     ylab(exercise) +
     theme_bw() +
-    ggtitle(exercise, sub_title)
+    ggtitle(exercise, sub_title) +
+  xlim(min(df$date), max(df$date))
   return(g)
 }
 #
@@ -117,6 +140,9 @@ ui <- shinyUI(fluidPage(
       
       # Show a plot of the generated distribution
       mainPanel(
+        h3(paste0(days()[1], ' days done.\n',
+                  days()[2], ' days to go.')),
+        br(),
         h1("Today's workout"),
         helpText('Select another date to the left to explore workouts for a different date'),
         dataTableOutput('today_table'),
@@ -135,6 +161,7 @@ ui <- shinyUI(fluidPage(
                                 'planks',  
                                 'pullups',  
                                 'pushups',  
+                                'sprints',
                                 'stair_minutes',
                                 'weight'),
                     selected = 'pullups'),
