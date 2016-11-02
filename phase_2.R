@@ -7,21 +7,27 @@ on_day <- data_frame(
            rep('core', 5),
            rep('squats', 3),
            'calf raises',
-           'sprints'),
+           'sprints',
+           'cardio_minutes',
+           'extra'),
   activity = c('regular', 'diamond', 'wide', 'shoulder', 'plyo', 'elevated', 'forward',
                'dips',
                'palms forward', 'palms inward', 'palms backward', 'wide', 'high', '1 arm',
                'knee balls', 'horizontal legs out', 'dynamic plank', 'plank', 'back crunches',
                'lunges', 'pistol squats', 'jumps',
                'calf raises',
-               'sprints'),
+               'sprints',
+               'cardio_minutes',
+               'extra'),
   scheduled = c(240, 10, 10, 10, 10, 10, 10,
                 60,
                 10, 10, 10, 10, 10, 10,
                 60, 10, 60, 300, 60,
                 60, 60, 60,
                 60,
-                60))
+                60,
+                30,
+                NA))
 
 cardio_day <- data_frame(
   type = c('extra', 'weight', 'cardio_minutes'),
@@ -53,6 +59,10 @@ make_day <- function(date = Sys.Date(),
               data_frame(type = 'stairs',
                          activity = 'stairs',
                          scheduled = 30))
+      # Replace back crunches with regular crunches
+      the_rows <- the_rows %>%
+        mutate(activity = ifelse(activity == 'back crunches', 'crunches', activity)) %>%
+        mutate(scheduled = ifelse(activity == 'crunches', 300, scheduled))
     }
   } else {
     if(dow %in% c('Tuesday', 'Thursday')){
@@ -101,7 +111,7 @@ make_day <- function(date = Sys.Date(),
 }
 
 results_list <- list()
-dates <- seq(as.Date('2016-10-24'),
+dates <- seq(as.Date('2016-11-02'),
              as.Date('2016-12-13'),
              by = 1)
 counter <- 1

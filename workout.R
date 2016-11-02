@@ -10,6 +10,7 @@ df$day <- weekdays(df$date)
 baseline <- data.frame(extra = NA,
                        weight = NA,
                        cardio_minutes = 20,
+                       sprints = 40,
                        pushups = 200,
                        pullups = 40,
                        dips = 40,
