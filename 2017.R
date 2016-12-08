@@ -10,6 +10,7 @@ day_number <- 1:length(dates)
 exercises <- c('pushups',
                'pullups',
                'hanging_knee_balls',
+               'ab_roller',
                'hanging_leg_lifts',
                'cardio_minutes',
                'dips',
@@ -48,10 +49,11 @@ create_day <- function(person = 'joe',
     } else if(person == 'ben'){
       df$value[df$exercise == 'pushups'] <- 200
       df$value[df$exercise == 'pullups'] <- 50
-      df$value[df$exercise == 'hanging_knee_balls'] <- 50
+      df$value[df$exercise == 'hanging_knee_balls'] <- 0
+      df$value[df$exercise == 'ab_roller'] <- 50
       df$value[df$exercise == 'hanging_leg_lifts'] <- 50
       df$value[df$exercise == 'cardio_minutes'] <- 30
-      df$value[df$exercise == 'dips'] <- 50
+      df$value[df$exercise == 'dips'] <- 0
       df$value[df$exercise == 'crunches'] <- 200
       df$value[df$exercise == 'jumps'] <- 0
       df$value[df$exercise == 'dynamic_plank'] <- 50
@@ -117,7 +119,8 @@ for (the_date in 1:length(dates)){
 final <- do.call('rbind', results_list)
 final <-
   final %>%
-  filter(value != 0)
+  filter(value != 0,
+         !is.na(value))
 
 final$done <- ''
-readr::write_csv(df, '~/Desktop/final.csv')
+readr::write_csv(final, '~/Desktop/final.csv')
