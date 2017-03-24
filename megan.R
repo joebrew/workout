@@ -70,24 +70,6 @@ result$scheduled[result$day %in%
                    c('Saturday',
                      'Sunday')] <- NA
 
-# Manually make some person specific modifications
-# ben starts at 2- pullups and 20 dips
-# ben doesn't do lunges or jumps but he does do stair minutes
-result$scheduled[result$person == 'ben' &
-                  result$activity == 'pullups'] <-
-  result$scheduled[result$person == 'ben' &
-                    result$activity == 'pullups'] - 20
-result$scheduled[result$person == 'ben' &
-                  result$activity == 'dips'] <-
-  result$scheduled[result$person == 'ben' &
-                    result$activity == 'dips'] - 20
-result$scheduled[result$person == 'ben' &
-                  result$activity == 'lunges'] <- NA
-result$scheduled[result$person == 'ben' &
-                  result$activity == 'jumps'] <- NA
-result$scheduled[result$person == 'joe' &
-                  result$activity == 'stair_minutes'] <- NA
-
 # Write over df
 df <- result; rm(result, baseline)
 
